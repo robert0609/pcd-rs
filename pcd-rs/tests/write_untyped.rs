@@ -35,6 +35,7 @@ fn write_ascii_untyped() -> Result<()> {
         viewpoint: Default::default(),
         data_kind: DataKind::Ascii,
         schema: Some(schema),
+        resolution: 0.5
     }
     .create(path)?;
 
@@ -87,6 +88,7 @@ fn write_binary_untyped() -> Result<()> {
         viewpoint: Default::default(),
         data_kind: DataKind::Binary,
         schema: Some(schema),
+        resolution: 0.5
     }
     .create(path)?;
 

@@ -210,6 +210,17 @@ pub fn load_meta<R: BufRead>(reader: &mut R, line_count: &mut usize) -> Result<P
         count
     };
 
+    // 兼容占用网络的头部字段
+    let meta_resolution = {
+      let tokens = get_meta_line("RESOLUTION")?;
+      if tokens.len() != 2 {
+        return Err(Error::new_parse_error(*line_count, "RESOLUTION line is not understood").into());
+      }
+  
+      let resolution: f64 = tokens[1].parse()?;
+      resolution
+    };
+
     let meta_data = {
         let tokens = get_meta_line("DATA")?;
 
@@ -290,6 +301,7 @@ pub fn load_meta<R: BufRead>(reader: &mut R, line_count: &mut usize) -> Result<P
         viewpoint: meta_viewpoint,
         num_points: meta_points,
         data: meta_data,
+        resolution: meta_resolution
     };
 
     Ok(meta)

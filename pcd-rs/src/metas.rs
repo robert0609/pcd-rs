@@ -12,6 +12,7 @@ pub struct PcdMeta {
     pub num_points: u64,
     pub data: DataKind,
     pub field_defs: Schema,
+    pub resolution: f64, // 兼容占用网络的头部字段
 }
 
 /// Represents VIEWPOINT field in meta data.

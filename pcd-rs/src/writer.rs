@@ -69,6 +69,7 @@ pub struct WriterInit {
     pub viewpoint: ViewPoint,
     pub data_kind: DataKind,
     pub schema: Option<Schema>,
+    pub resolution: f64, // 兼容占用网络的头部字段
 }
 
 impl WriterInit {
@@ -104,6 +105,7 @@ impl WriterInit {
             self.viewpoint,
             record_spec,
             writer,
+            self.resolution,
         )?;
         Ok(seq_writer)
     }
@@ -147,6 +149,7 @@ where
         viewpoint: ViewPoint,
         record_spec: Schema,
         mut writer: W,
+        resolution: f64, // 兼容占用网络的头部字段
     ) -> Result<Self> {
         let (points_arg_begin, points_arg_width) = {
             let fields_args: Vec<_> = record_spec
@@ -202,8 +205,8 @@ where
 
             let points_arg_width = (usize::max_value() as f64).log10().floor() as usize + 1;
 
-            writeln!(writer, "# .PCD v.7 - Point Cloud Data file format")?;
-            writeln!(writer, "VERSION .7")?;
+            writeln!(writer, "# .ON v0.1 - Occupancy Network Data file format")?; // 兼容占用网络的头部字段
+            writeln!(writer, "VERSION .1")?;
             writeln!(writer, "FIELDS {}", fields_args.join(" "))?;
             writeln!(writer, "SIZE {}", size_args.join(" "))?;
             writeln!(writer, "TYPE {}", type_args.join(" "))?;
@@ -215,6 +218,8 @@ where
             write!(writer, "POINTS ")?;
             let points_arg_begin = writer.seek(SeekFrom::Current(0))?;
             writeln!(writer, "{:width$}", " ", width = points_arg_width)?;
+
+            writeln!(writer, "RESOLUTION {}", resolution)?; // 兼容占用网络的头部字段
 
             match data_kind {
                 DataKind::Binary => writeln!(writer, "DATA binary")?,

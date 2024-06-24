@@ -38,6 +38,7 @@ fn main() -> Result<()> {
         viewpoint: Default::default(),
         data_kind: DataKind::Ascii,
         schema: Some(Schema::from_iter(schema)),
+        resolution: 0.5
     }
     .create(path)?;
 
